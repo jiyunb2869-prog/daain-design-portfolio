@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>디자인 사례 포트폴리오</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Hero Header -->
+  <header class="hero" id="hero">
+    <div class="hero__bg" id="heroBg"></div>
+    <div class="hero__overlay"></div>
+    <div class="hero__content">
+      <img src="로고.svg" alt="DAAIN" class="hero__logo" />
+      <h1 class="hero__title">DAAIN DESIGN PORTFOLIO</h1>
+      <p class="hero__project" id="heroProject"></p>
+    </div>
+  </header>
+
+  <!-- Controls: Tabs + Search -->
+  <section class="controls">
+    <nav class="tabs">
+      <button class="tab active" data-category="all">전체</button>
+      <button class="tab" data-category="completion">일반 준공작</button>
+      <button class="tab" data-category="design">일반 디자인작</button>
+      <button class="tab" data-category="residential_design">주거 디자인</button>
+      <button class="tab" data-category="residential_completion">주거 준공</button>
+      <button class="tab tab--proposal" data-category="proposal">현상공모</button>
+    </nav>
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="프로젝트명, 발주처, 주소 검색..." />
+      <select id="yearFilter">
+        <option value="">연도 전체</option>
+      </select>
+      <select id="facadeFilter" style="display:none;">
+        <option value="">입면 카테고리 전체</option>
+      </select>
+      <select id="layoutFilter" style="display:none;">
+        <option value="">배치 카테고리 전체</option>
+      </select>
+    </div>
+  </section>
+
+  <!-- Sub-filter: 디자인작 소분류 -->
+  <section class="sub-filter" id="subFilter" style="display:none;">
+    <nav class="sub-tabs">
+      <button class="sub-tab active" data-design-type="all">전체</button>
+      <button class="sub-tab" data-design-type="dain">다인 현상작</button>
+      <button class="sub-tab" data-design-type="other">타회사 현상작</button>
+    </nav>
+  </section>
+
+  <!-- Sub-filter: 현상공모 (일반공모/제안공모 + 검색) -->
+  <section class="sub-filter" id="proposalSubFilter" style="display:none;">
+    <nav class="sub-tabs" id="proposalTypeTabs">
+      <button class="sub-tab active" data-proposal-type="all">전체</button>
+      <button class="sub-tab sub-tab--general" data-proposal-type="일반공모">일반공모</button>
+      <button class="sub-tab sub-tab--invited" data-proposal-type="제안공모">제안공모</button>
+    </nav>
+    <div class="proposal-company-filter">
+      <select id="proposalCompanyFilter">
+        <option value="">참여사 전체</option>
+      </select>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <div class="stats" id="stats"></div>
+
+  <!-- Project Grid (포트폴리오) -->
+  <main class="grid" id="projectGrid"></main>
+
+  <!-- Proposal Grid (현상도집) -->
+  <main class="grid" id="proposalGrid" style="display:none;"></main>
+
+  <!-- Empty State -->
+  <div class="empty-state" id="emptyState" style="display:none;">
+    <p>검색 결과가 없습니다.</p>
+  </div>
+
+  <!-- Modal (프로젝트 상세) -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <button class="modal__close" id="modalClose">&times;</button>
+
+      <!-- Image Slider -->
+      <div class="slider">
+        <div class="slider__container" id="sliderContainer"></div>
+        <button class="slider__btn slider__btn--prev" id="sliderPrev">&#10094;</button>
+        <button class="slider__btn slider__btn--next" id="sliderNext">&#10095;</button>
+        <div class="slider__counter" id="sliderCounter"></div>
+        <div class="slider__caption" id="sliderCaption"></div>
+      </div>
+
+      <!-- Image Filter Tabs in Modal -->
+      <div class="image-filter" id="imageFilter"></div>
+
+      <!-- Image Thumbnails -->
+      <div class="slider__thumbs" id="sliderThumbs"></div>
+
+      <!-- Project Info -->
+      <div class="modal__info" id="modalInfo">
+        <h2 class="modal__name" id="modalName"></h2>
+        <p class="modal__concept" id="modalConcept"></p>
+
+        <!-- AI 입면 카테고리 -->
+        <div class="facade-section" id="facadeSection">
+          <h4 class="ai-section__title">AI 입면 분석</h4>
+          <div class="facade-badges" id="facadeBadges"></div>
+          <p class="facade-desc" id="facadeDesc"></p>
+        </div>
+        <!-- AI 배치 카테고리 -->
+        <div class="layout-section" id="layoutSection">
+          <h4 class="ai-section__title">AI 배치 분석</h4>
+          <div class="layout-badges" id="layoutBadges"></div>
+          <p class="layout-desc" id="layoutDesc"></p>
+        </div>
+
+        <table class="info-table">
+          <tr><th>연도</th><td id="infoYear"></td></tr>
+          <tr><th>발주처</th><td id="infoClient"></td></tr>
+          <tr><th>용도</th><td id="infoUse"></td></tr>
+          <tr><th>주소지</th><td id="infoAddress"></td></tr>
+          <tr><th>대지면적</th><td id="infoSiteArea"></td></tr>
+          <tr><th>건축면적</th><td id="infoBuildingArea"></td></tr>
+          <tr><th>연면적</th><td id="infoTotalArea"></td></tr>
+          <tr><th>층수</th><td id="infoFloors"></td></tr>
+          <tr><th>건폐율</th><td id="infoCoverage"></td></tr>
+          <tr><th>용적률</th><td id="infoFAR"></td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal (현상공모 상세) -->
+  <div class="modal-overlay" id="proposalModalOverlay">
+    <div class="modal modal--wide">
+      <button class="modal__close" id="proposalModalClose">&times;</button>
+
+      <!-- 프로젝트 내 도집 선택 탭 -->
+      <div class="entry-tabs" id="entryTabs"></div>
+
+      <div class="slider">
+        <div class="slider__container" id="proposalSliderContainer"></div>
+        <button class="slider__btn slider__btn--prev" id="proposalSliderPrev">&#10094;</button>
+        <button class="slider__btn slider__btn--next" id="proposalSliderNext">&#10095;</button>
+        <div class="slider__counter" id="proposalSliderCounter"></div>
+        <div class="slider__caption" id="proposalSliderCaption"></div>
+      </div>
+
+      <!-- 페이지 유형 필터 탭 -->
+      <div class="image-filter" id="proposalPageFilter"></div>
+
+      <div class="slider__thumbs" id="proposalSliderThumbs"></div>
+
+      <div class="modal__info">
+        <h2 class="modal__name" id="proposalModalName"></h2>
+        <div class="proposal-meta" id="proposalMetaInfo">
+          <span class="proposal-type-badge" id="proposalTypeBadge"></span>
+          <span class="proposal-rank-badge" id="proposalRankBadge"></span>
+        </div>
+        <table class="info-table">
+          <tr><th>프로젝트</th><td id="proposalProjectName"></td></tr>
+          <tr><th>참여사</th><td id="proposalCompany"></td></tr>
+          <tr><th>순위</th><td id="proposalRank"></td></tr>
+          <tr><th>공모유형</th><td id="proposalType"></td></tr>
+          <tr><th>페이지 수</th><td id="proposalPageCount"></td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI 설정 모달 -->
+  <div class="modal-overlay" id="aiConfigOverlay">
+    <div class="modal" style="max-width:480px;">
+      <button class="modal__close" id="aiConfigClose">&times;</button>
+      <div class="modal__info">
+        <h2 class="modal__name">AI 설정</h2>
+        <p style="color:#666;font-size:0.9rem;margin-bottom:16px;">Claude API 키를 입력하면 AI 입면 분석 기능을 사용할 수 있습니다.</p>
+        <div style="margin-bottom:16px;">
+          <label style="font-weight:600;font-size:0.9rem;">Anthropic API Key</label>
+          <input type="password" id="aiApiKeyInput" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:6px;margin-top:6px;font-size:0.9rem;" placeholder="sk-ant-..." />
+        </div>
+        <div id="aiKeyStatus" style="font-size:0.85rem;color:#888;margin-bottom:16px;"></div>
+        <button id="aiConfigSave" style="padding:10px 24px;background:#1a1a2e;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:0.9rem;">저장</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
